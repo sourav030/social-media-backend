@@ -9,17 +9,25 @@ let pool;
  */
 const initializePool = () => {
 	if (!pool) {
-		pool = new Pool({
-			host: process.env.DB_HOST,
-			port: process.env.DB_PORT,
-			database: process.env.DB_NAME,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD,
-			ssl: { rejectUnauthorized: false }, // REQUIRED for Render
-			max: 20,
-			idleTimeoutMillis: 30000,
-			connectionTimeoutMillis: 2000,
-		});
+		if (process.env.DATABASE_URL) {
+			pool = new Pool({
+				connectionString: process.env.DATABASE_URL,
+				ssl: {
+					rejectUnauthorized: false, // Allow SSL for external DBs
+				},
+			});
+		} else {
+			pool = new Pool({
+				host: process.env.DB_HOST,
+				port: process.env.DB_PORT,
+				database: process.env.DB_NAME,
+				user: process.env.DB_USER,
+				password: process.env.DB_PASSWORD,
+				max: 20,
+				idleTimeoutMillis: 30000,
+				connectionTimeoutMillis: 2000,
+			});
+		}
 
 		pool.on("error", (err) => {
 			logger.critical("Unexpected error on idle client", err);
