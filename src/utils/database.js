@@ -15,6 +15,7 @@ const initializePool = () => {
 			database: process.env.DB_NAME,
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD,
+			ssl: { rejectUnauthorized: false }, // REQUIRED for Render
 			max: 20,
 			idleTimeoutMillis: 30000,
 			connectionTimeoutMillis: 2000,
